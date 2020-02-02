@@ -58,7 +58,7 @@ public class StuServiceImpl implements StuService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveChildren() {
         saveChild1();
-        int a = 1 / 0;
+        //int a = 1 / 0;
         saveChild2();
     }
 
