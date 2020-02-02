@@ -1,6 +1,9 @@
 package com.imooc.controller;
 
+import com.imooc.common.utils.CookieUtils;
 import com.imooc.common.utils.IMOOCJSONResult;
+import com.imooc.common.utils.JsonUtils;
+import com.imooc.common.utils.MD5Utils;
 import com.imooc.pojo.Users;
 import com.imooc.pojo.bo.UserBo;
 import com.imooc.service.UserService;
@@ -9,6 +12,9 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by eru on 2020/2/2.
@@ -55,6 +61,28 @@ public class PassportController {
         }
 
         Users user = userService.createUser(userBo);
+        return IMOOCJSONResult.ok(user);
+    }
+
+    @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
+    @PostMapping("/login")
+    public IMOOCJSONResult login(@RequestBody UserBo userBo,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) throws Exception {
+        String username = userBo.getUsername();
+        String password = userBo.getPassword();
+        if (StringUtils.isBlank(username)
+                || StringUtils.isBlank(password)){
+            return IMOOCJSONResult.errorMsg("用户名或密码不能为空");
+        }
+        Users user = userService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
+
+        if (user == null){
+            return IMOOCJSONResult.errorMsg("用户名不存在");
+        }
+        CookieUtils.setCookie(request, response, "user",
+                JsonUtils.objectToJson(user), true);
+
         return IMOOCJSONResult.ok(user);
     }
 }
