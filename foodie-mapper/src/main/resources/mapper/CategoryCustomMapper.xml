@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.imooc.mapper.CategoryCustomMapper" >
+  <resultMap id="BaseResultMap" type="com.imooc.pojo.vo.CategoryVO" >
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="type" property="type"/>
+    <result column="fatherId" property="fatherId"/>
+    <collection property="subCatList" ofType="com.imooc.pojo.vo.SubCategoryVO">
+      <id column="subId" property="subId"/>
+      <result column="subName" property="subName"/>
+      <result column="subType" property="subType"/>
+      <result column="subFatherId" property="subFatherId"/>
+    </collection>
+  </resultMap>
+
+  <select id="getSubCatList" resultMap="BaseResultMap">
+    SELECT
+      f.id AS id,
+      f. NAME AS NAME,
+      f.type AS type,
+      f.father_id AS fatherId,
+      c.id AS subId,
+      c. NAME AS subName,
+      c.type AS subType,
+      c.father_id AS subFatherId
+    FROM
+        category f
+    LEFT JOIN category c ON f.id = c.father_id
+    WHERE
+	    f.id = #{rootCatId}
+  </select>
+</mapper>
