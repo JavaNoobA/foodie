@@ -28,6 +28,6 @@
         category f
     LEFT JOIN category c ON f.id = c.father_id
     WHERE
-	    f.id = #{rootCatId}
+	    f.father_id = #{rootCatId}
   </select>
 </mapper>
