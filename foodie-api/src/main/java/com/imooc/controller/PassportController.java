@@ -85,4 +85,12 @@ public class PassportController {
 
         return IMOOCJSONResult.ok(user);
     }
+
+    @PostMapping("/logout")
+    public IMOOCJSONResult logout(@RequestParam String userId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response){
+        CookieUtils.deleteCookie(request, response, "user");
+        return IMOOCJSONResult.ok();
+    }
 }
