@@ -1,6 +1,7 @@
 package com.imooc.pojo.vo;
 
 /**
+ * 商品一级分类下最新的6个商品VO
  * Created by eru on 2020/2/5.
  */
 public class SimpleItemVO {

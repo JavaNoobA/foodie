@@ -3,6 +3,7 @@ package com.imooc.pojo.vo;
 import java.util.List;
 
 /**
+ * 首页商品VO
  * Created by eru on 2020/2/5.
  */
 public class NewItemsVO {

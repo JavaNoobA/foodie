@@ -1,6 +1,7 @@
 package com.imooc.pojo.vo;
 
 /**
+ * 二级分类VO
  * Created by eru on 2020/2/3.
  */
 public class SubCategoryVO {
