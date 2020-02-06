@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
         }
         user.setNickname(userBo.getUsername());
         user.setBirthday(DateUtil.stringToDate("1900-01-01"));
-        user.setSex(Sex.secret.type);
+        user.setSex(Sex.SECRET.type);
         user.setFace(USER_FACE);
         user.setCreatedTime(new Date());
         user.setUpdatedTime(new Date());

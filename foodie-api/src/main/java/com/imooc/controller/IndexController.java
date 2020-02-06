@@ -36,7 +36,7 @@ public class IndexController {
     @ApiOperation(value = "首页轮播图", notes = "首页轮播图", httpMethod = "GET")
     @GetMapping("/carousel")
     public IMOOCJSONResult carousel(){
-        List<Carousel> carouselList = carouselService.queryAll(YesOrNo.yes.type);
+        List<Carousel> carouselList = carouselService.queryAll(YesOrNo.YES.type);
         return IMOOCJSONResult.ok(carouselList);
     }
 

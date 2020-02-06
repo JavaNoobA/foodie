@@ -74,9 +74,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentLevelCountsVO queryCommentCounts(String itemId) {
-        int goodCounts = getCommentCounts(itemId, CommentLevel.good.level);
-        int normalCounts = getCommentCounts(itemId, CommentLevel.normal.level);
-        int badCounts = getCommentCounts(itemId, CommentLevel.bad.level);
+        int goodCounts = getCommentCounts(itemId, CommentLevel.GOOD.level);
+        int normalCounts = getCommentCounts(itemId, CommentLevel.NORMAL.level);
+        int badCounts = getCommentCounts(itemId, CommentLevel.BAD.level);
 
         CommentLevelCountsVO countsVO = new CommentLevelCountsVO();
         countsVO.setGoodCounts(goodCounts);
