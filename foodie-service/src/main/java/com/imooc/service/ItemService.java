@@ -52,7 +52,29 @@ public interface ItemService {
      * 查询商品评价信息
      * @param itemId 商品id
      * @param level 商品评价等级
+     * @param page 定位到的具体页数
+     * @param pageSize 每页显示条目数
      * @return ItemsComments
      */
     PagedGridResult queryPagedComments(String itemId, Integer level, Integer page, Integer pageSize);
+
+    /**
+     * 商品搜素
+     * @param keyword 关键字
+     * @param sort 排序规则
+     * @param page 定位到的具体页数
+     * @param pageSize 每页显示条目数
+     * @return
+     */
+    PagedGridResult searchItems(String keyword, String sort, Integer page, Integer pageSize);
+
+    /**
+     * 商品搜素
+     * @param catId 三级分类ID
+     * @param sort 排序规则
+     * @param page 定位到的具体页数
+     * @param pageSize 每页显示条目数
+     * @return
+     */
+    PagedGridResult searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize);
 }

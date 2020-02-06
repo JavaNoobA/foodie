@@ -9,6 +9,7 @@ import com.imooc.mapper.*;
 import com.imooc.pojo.*;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
 import com.imooc.pojo.vo.ItemCommentVO;
+import com.imooc.pojo.vo.SearchItemsVO;
 import com.imooc.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,6 +100,28 @@ public class ItemServiceImpl implements ItemService {
             vo.setNickname(DesensitizationUtil.commonDisplay(vo.getNickname()));
          }
         return setPageGrid(commentVOList, page);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public PagedGridResult searchItems(String keyword, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("keyword", keyword);
+        map.put("sort", sort);
+        PageHelper.startPage(page, pageSize);
+        List<SearchItemsVO> list = itemsCustomMapper.searchItems(map);
+        return setPageGrid(list, page);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public PagedGridResult searchItemsByThirdCat(Integer catId, String sort, Integer page, Integer pageSize) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("catId", catId);
+        map.put("sort", sort);
+        PageHelper.startPage(page, pageSize);
+        List<SearchItemsVO> list = itemsCustomMapper.searchItemsByThirdCat(map);
+        return setPageGrid(list, page);
     }
 
     public PagedGridResult setPageGrid(List<?> list, int page){

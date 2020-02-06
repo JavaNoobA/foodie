@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by eru on 2020/2/5.
  */
-@Api(value = "商品", tags = {"商品接口"})
+@Api(value = "商品信息", tags = {"商品信息展示相关接口"})
 @RestController
 @RequestMapping("items")
 public class ItemController extends BaseController{
@@ -84,6 +84,50 @@ public class ItemController extends BaseController{
         }
 
         PagedGridResult grid = itemService.queryPagedComments(itemId, level, page, pageSize);
+        return IMOOCJSONResult.ok(grid);
+    }
+
+    @ApiOperation(value = "商品搜索", notes = "商品搜索", httpMethod = "GET")
+    @GetMapping("/search")
+    public IMOOCJSONResult search(@RequestParam @ApiParam(name = "keywords", value = "关键字", required = true) String keywords,
+                                    @RequestParam @ApiParam(name = "sort", value = "排序规则", required = false) String sort,
+                                    @RequestParam @ApiParam(name = "page", value = "查询第几页", required = false) Integer page,
+                                    @RequestParam @ApiParam(name = "pageSize", value = "每页显示的条目数", required = false) Integer pageSize){
+        if (StringUtils.isBlank(keywords)){
+            return IMOOCJSONResult.errorMsg(null);
+        }
+
+        if (page == null){
+            page = 1;
+        }
+
+        if (pageSize == null){
+            pageSize = PAGE_SIZE;
+        }
+
+        PagedGridResult grid = itemService.searchItems(keywords, sort, page, pageSize);
+        return IMOOCJSONResult.ok(grid);
+    }
+
+    @ApiOperation(value = "根据分类id搜索商品", notes = "根据分类id搜索商品", httpMethod = "GET")
+    @GetMapping("/catItems")
+    public IMOOCJSONResult searchItemsByThirdCat(@RequestParam @ApiParam(name = "catId", value = "三级分类ID", required = true) Integer catId,
+                                    @RequestParam @ApiParam(name = "sort", value = "排序规则", required = false) String sort,
+                                    @RequestParam @ApiParam(name = "page", value = "查询第几页", required = false) Integer page,
+                                    @RequestParam @ApiParam(name = "pageSize", value = "每页显示的条目数", required = false) Integer pageSize){
+        if (catId == null){
+            return IMOOCJSONResult.errorMsg(null);
+        }
+
+        if (page == null){
+            page = 1;
+        }
+
+        if (pageSize == null){
+            pageSize = PAGE_SIZE;
+        }
+
+        PagedGridResult grid = itemService.searchItemsByThirdCat(catId, sort, page, pageSize);
         return IMOOCJSONResult.ok(grid);
     }
 }
