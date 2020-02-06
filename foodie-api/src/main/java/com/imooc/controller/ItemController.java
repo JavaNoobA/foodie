@@ -8,6 +8,7 @@ import com.imooc.pojo.ItemsParam;
 import com.imooc.pojo.ItemsSpec;
 import com.imooc.pojo.vo.CommentLevelCountsVO;
 import com.imooc.pojo.vo.ItemInfoVO;
+import com.imooc.pojo.vo.ShopcartVO;
 import com.imooc.service.ItemService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -112,9 +113,9 @@ public class ItemController extends BaseController{
     @ApiOperation(value = "根据分类id搜索商品", notes = "根据分类id搜索商品", httpMethod = "GET")
     @GetMapping("/catItems")
     public IMOOCJSONResult searchItemsByThirdCat(@RequestParam @ApiParam(name = "catId", value = "三级分类ID", required = true) Integer catId,
-                                    @RequestParam @ApiParam(name = "sort", value = "排序规则", required = false) String sort,
-                                    @RequestParam @ApiParam(name = "page", value = "查询第几页", required = false) Integer page,
-                                    @RequestParam @ApiParam(name = "pageSize", value = "每页显示的条目数", required = false) Integer pageSize){
+                                                 @RequestParam @ApiParam(name = "sort", value = "排序规则", required = false) String sort,
+                                                 @RequestParam @ApiParam(name = "page", value = "查询第几页", required = false) Integer page,
+                                                 @RequestParam @ApiParam(name = "pageSize", value = "每页显示的条目数", required = false) Integer pageSize){
         if (catId == null){
             return IMOOCJSONResult.errorMsg(null);
         }
@@ -129,5 +130,17 @@ public class ItemController extends BaseController{
 
         PagedGridResult grid = itemService.searchItemsByThirdCat(catId, sort, page, pageSize);
         return IMOOCJSONResult.ok(grid);
+    }
+
+    @ApiOperation(value = "刷新购物车", notes = "刷新购物车", httpMethod = "GET")
+    @GetMapping("/refresh")
+    public IMOOCJSONResult refresh(@RequestParam @ApiParam(name = "itemSpecIds", value = "拼接的规格ids", required = true, example = "1003, 1005, 1007") String itemSpecIds){
+
+        if (StringUtils.isBlank(itemSpecIds)){
+            return IMOOCJSONResult.ok();
+        }
+
+        List<ShopcartVO> list = itemService.queryItemsBySpecIds(itemSpecIds);
+        return IMOOCJSONResult.ok(list);
     }
 }
