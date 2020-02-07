@@ -7,6 +7,8 @@ import com.imooc.mapper.OrderStatusMapper;
 import com.imooc.mapper.OrdersMapper;
 import com.imooc.pojo.*;
 import com.imooc.pojo.bo.SubmitOrderBo;
+import com.imooc.pojo.vo.MerchantOrdersVO;
+import com.imooc.pojo.vo.OrderVO;
 import com.imooc.service.AddressService;
 import com.imooc.service.ItemService;
 import com.imooc.service.OrderService;
@@ -39,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public void createOrder(SubmitOrderBo submitOrderBo) {
+    public OrderVO createOrder(SubmitOrderBo submitOrderBo) {
         String userId = submitOrderBo.getUserId();
         String addressId = submitOrderBo.getAddressId();
         String itemSpecIds = submitOrderBo.getItemSpecIds();
@@ -75,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         // 2.循环根据itemSpecIds保存订单商品信息表
         String[] specIds = itemSpecIds.split(",");
         Integer totalAmount = 0;
-        Integer realAmount = 0;
+        Integer realPayAmount = 0;
         for(String itemSpecId: specIds){
 
             // TODO 整合redis后，商品购买的数量重新从redis的购物车中获取
@@ -84,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
             // 2.1 根据规格id，查询规格的具体信息，主要获取价格
             ItemsSpec itemSpec = itemService.querySingleItemSpec(itemSpecId);
             totalAmount += itemSpec.getPriceNormal() * buyCounts;
-            realAmount += itemSpec.getPriceDiscount() * buyCounts;
+            realPayAmount += itemSpec.getPriceDiscount() * buyCounts;
 
             // 2.2 根据商品id，获得商品信息和商品图片
             String itemId = itemSpec.getItemId();
@@ -109,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
             itemService.decreaseItemSpecSock(itemSpecId, buyCounts);
         }
         newOrder.setTotalAmount(totalAmount);
-        newOrder.setRealPayAmount(realAmount);
+        newOrder.setRealPayAmount(realPayAmount);
         orderMapper.insert(newOrder);
 
         // 3. 保存订单状态表
@@ -118,5 +120,34 @@ public class OrderServiceImpl implements OrderService {
         waitPayOrderStatus.setOrderStatus(OrderStatusEnum.WAIT_PAY.type);
         waitPayOrderStatus.setCreatedTime(new Date());
         orderStatusMapper.insert(waitPayOrderStatus);
+
+        // 4. 构建商户订单,用于传给支付中心
+        MerchantOrdersVO merchantOrdersVO = new MerchantOrdersVO();
+        merchantOrdersVO.setMerchantOrderId(orderId);
+        merchantOrdersVO.setMerchantUserId(userId);
+        merchantOrdersVO.setAmount(realPayAmount + postAmount);
+        merchantOrdersVO.setPayMethod(payMethod);
+
+        // 5. 构建自定义订单vo
+        OrderVO orderVO = new OrderVO();
+        orderVO.setOrderId(orderId);
+        orderVO.setMerchantOrdersVO(merchantOrdersVO);
+        return orderVO;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateOrderStatus(String merchantOrderId, Integer orderStatus) {
+        OrderStatus os = new OrderStatus();
+        os.setOrderId(merchantOrderId);
+        os.setOrderStatus(orderStatus);
+        os.setPayTime(new Date());
+        orderStatusMapper.updateByPrimaryKeySelective(os);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public OrderStatus queryOrderStatusInfo(String orderId) {
+        return orderStatusMapper.selectByPrimaryKey(orderId);
     }
 }
