@@ -36,6 +36,13 @@ public interface ItemService {
     List<ItemsSpec> queryItemSpecByItemId(String itemId);
 
     /**
+     * 查询单一的商品规格
+     * @param specId 商品规格id
+     * @return
+     */
+    ItemsSpec querySingleItemSpec(String specId);
+
+    /**
      * 根据商品id查询商品参数
      * @param itemId 商品id
      * @return ItemsParam
@@ -85,4 +92,19 @@ public interface ItemService {
      * @return
      */
     List<ShopcartVO> queryItemsBySpecIds(String specIds);
+
+    /**
+     * 查询商品图片url
+     * @param itemId 商品id
+     * @return 商品图片url
+     */
+    String queryItemMainImgById(String itemId);
+
+    /**
+     * 扣库存
+     * @param specId 商品规格 id
+     * @param pendingCounts 商品数量
+     * @return
+     */
+    void decreaseItemSpecSock(String specId, int pendingCounts);
 }

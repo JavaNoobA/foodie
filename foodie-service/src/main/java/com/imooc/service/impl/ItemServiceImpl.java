@@ -3,6 +3,7 @@ package com.imooc.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.imooc.common.enums.CommentLevel;
+import com.imooc.common.enums.YesOrNo;
 import com.imooc.common.utils.DesensitizationUtil;
 import com.imooc.common.utils.PagedGridResult;
 import com.imooc.mapper.*;
@@ -61,6 +62,12 @@ public class ItemServiceImpl implements ItemService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("itemId", itemId);
         return itemsSpecMapper.selectByExample(example);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public ItemsSpec querySingleItemSpec(String specId) {
+        return itemsSpecMapper.selectByPrimaryKey(specId);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -131,6 +138,25 @@ public class ItemServiceImpl implements ItemService {
         Collections.addAll(ids, strings);
 
         return itemsCustomMapper.queryItemsBySpecIds(ids);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public String queryItemMainImgById(String itemId) {
+        ItemsImg itemsImg = new ItemsImg();
+        itemsImg.setItemId(itemId);
+        itemsImg.setIsMain(YesOrNo.YES.type);
+        ItemsImg img = itemsImgMapper.selectOne(itemsImg);
+        return img.getUrl() != null ? img.getUrl(): "";
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void decreaseItemSpecSock(String specId, int pendingCounts) {
+        int result = itemsCustomMapper.decreaseItemSpecStock(specId, pendingCounts);
+        if (result != 1){
+            throw new RuntimeException("订单创建失败, 库存不足");
+        }
     }
 
     public PagedGridResult setPageGrid(List<?> list, int page){
