@@ -10,6 +10,7 @@ import com.imooc.pojo.vo.MerchantOrdersVO;
 import com.imooc.pojo.vo.OrderVO;
 import com.imooc.service.OrderService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class OrdersController extends BaseController{
     @Autowired
     private RestTemplate restTemplate;
 
+    @ApiOperation(value = "创建订单", notes = "创建订单", httpMethod = "POST")
     @PostMapping("/create")
     public IMOOCJSONResult create(@RequestBody SubmitOrderBo submitOrderBo,
                                   HttpServletRequest request,
