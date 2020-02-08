@@ -28,4 +28,9 @@ public interface OrderService {
      * @return
      */
     OrderStatus queryOrderStatusInfo(String orderId);
+
+    /**
+     * 超时的订单
+     */
+    void closeOrder();
 }
