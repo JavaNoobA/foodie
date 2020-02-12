@@ -2,6 +2,8 @@ package com.imooc.controller;
 
 import org.springframework.stereotype.Controller;
 
+import java.io.File;
+
 /**
  * Created by eru on 2020/2/5.
  */
@@ -17,4 +19,7 @@ public class BaseController {
     // 微信支付成功 -> 支付中心 -> 天天吃货平台
     //                       |-> 回调通知的url
     String payReturnUrl = "http://api.z.mukewang.com/foodie-dev-api/orders/notifyMerchantOrderPaid";
+
+    // 用户上传头像默认位置 C:\Code\imgs
+    public static final String fileLocaltion = "C:" + File.separator + "Code" + File.separator +  "imgs";
 }
