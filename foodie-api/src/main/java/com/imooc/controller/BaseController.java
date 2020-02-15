@@ -1,5 +1,9 @@
 package com.imooc.controller;
 
+import com.imooc.common.utils.IMOOCJSONResult;
+import com.imooc.pojo.Orders;
+import com.imooc.service.center.MyOrdersService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
@@ -22,4 +26,19 @@ public class BaseController {
 
     // 用户上传头像默认位置 C:\Code\imgs
     public static final String fileLocaltion = "C:" + File.separator + "Code" + File.separator +  "imgs";
+
+    @Autowired
+    public MyOrdersService myOrdersService;
+
+    /**
+     * 用于验证用户和订单是否有关联关系，避免非法用户调用
+     * @return
+     */
+    public IMOOCJSONResult checkUserOrder(String userId, String orderId) {
+        Orders order = myOrdersService.queryMyOrder(userId, orderId);
+        if (order == null) {
+            return IMOOCJSONResult.errorMsg("订单不存在！");
+        }
+        return IMOOCJSONResult.ok(order);
+    }
 }
